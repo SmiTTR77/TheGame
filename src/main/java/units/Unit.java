@@ -1,8 +1,9 @@
 package units;
 
+import java.util.List;
 import java.util.Random;
 
-public abstract class Unit {
+public abstract class Unit implements GameInterface{
     public String name;
     public String type;
     public int health;
@@ -13,7 +14,9 @@ public abstract class Unit {
     public int damage;
     public int energy;
 
-    public Unit(String name, String type, int health, int maxHealth, int initiative, int defence, int attack, int damage, int energy) {
+    public Coordinates coordinates;
+
+    public Unit(String name, String type, int health, int maxHealth, int initiative, int defence, int attack, int damage, int energy, int x, int y) {
         this.name = name;
         this.type = type;
         this.maxHealth = this.health = health;
@@ -22,11 +25,12 @@ public abstract class Unit {
         this.attack = attack;
         this.damage = damage;
         this.energy = energy;
+        coordinates = new Coordinates(x, y);
     }
 
     public String getUnitInfo(){
-        return String.format("Имя: %s (%s) \nHp: { %d } \tИнициатива: { %d }  \tЗащита: { %d } \tАтака: { %d } \tЭнергия: { %d } ",
-                this.name, this.type, this.health, this.initiative, this.defence, this.attack, this.energy);
+        return String.format("Имя: %s (%s) \nHp: { %d } \tИнициатива: { %d }  \tЗащита: { %d } \tАтака: { %d } \tЭнергия: { %d } \tПозиция: (%d, %d) ",
+                this.name, this.type, this.health, this.initiative, this.defence, this.attack, this.energy, coordinates.x, coordinates.y);
     }
 
 
@@ -51,4 +55,17 @@ public abstract class Unit {
         return energy;
     }
 
+
+
+    public Unit nearest(List<Unit> team){
+        double nearestDistance = Double.MAX_VALUE;
+        Unit nearestEnemy = null;
+        for (int i = 0; i < team.size(); i++) {
+            if(coordinates.getDistance(team.get(i).coordinates) < nearestDistance){
+                nearestEnemy = team.get(i);
+                nearestDistance = coordinates.getDistance(team.get(i).coordinates);
+            }
+        }
+        return nearestEnemy;
+    }
 }
