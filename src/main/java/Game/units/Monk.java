@@ -1,25 +1,51 @@
 package Game.units;
 
+import java.util.ArrayList;
+
 public class Monk extends Healer {
-    public Monk(String name, String type, int health, int maxHealth, int initiative, int distance, int attack, int damage, int mana, boolean isAlive, int x, int y) {
-        super(name, type, health, maxHealth, initiative, distance, attack, damage, mana, isAlive, x, y);
-    }
-    public Monk(String name, int x, int y){
-        super(name, "Монах", 100, 100,1, 10,20,0,3,true, x, y);
-    }
-    public Monk(int x, int y){
-        super("Моня", "Монах", 100, 100,1, 10,20,0,3,true, x, y);
+    public Monk(String name, int x, int y) {
+        super(name,
+            "Монах",
+            40,
+            40,
+            1,
+            1,
+            20,
+            5,
+            3,
+            1,
+                true,
+            x, y);
     }
     @Override
     public String getInfo() {
-
-        return String.format("Имя: %s (%s) \tПозиция: (x = %d, y = %d)",
-                this.name, this.type, this.coordinates.x, this.coordinates.y);
+        return type + " " + name + " " + "[" + coordinates.x + ", " + coordinates.y + "] HP: " + health + "/" + maxHealth + " " + "Мана:" + mana + " " + state;
     }
+    @Override
+    public void step(ArrayList<Unit> enemy, ArrayList<Unit> allys) {
+        if (!isAlive) return;
 
-//    @Override
-//    public void step(ArrayList<Unit> allys, ArrayList<Unit> enemy) {
-//        Unit currentEnemy = nearest(enemy);
-//        System.out.println(currentEnemy.name + " " + coordinates.getDistance(currentEnemy.coordinates));
-//    }
+        super.step(enemy, allys);
+        Unit tmpAlly = allys.get(0);
+        double minAllyHealth = 1;
+
+        if (!isAlive) return;
+
+        for (Unit unit: allys) {
+            if (unit.health / unit.maxHealth < minAllyHealth && unit.isAlive) {
+                minAllyHealth = unit.health / unit.maxHealth;
+                tmpAlly = unit;
+            }
+        }
+
+        if (minAllyHealth < 1 && mana > 0) {
+            tmpAlly.getDamage(-damage);
+            mana -= 1;
+            state = "Healing";
+
+            return;
+        }
+    }
 }
+
+

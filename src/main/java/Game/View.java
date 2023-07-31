@@ -1,7 +1,9 @@
 package Game;
 
 import Game.units.Unit;
+
 import java.util.Collections;
+
 public class View {
 
     private static int step = 1;
@@ -27,17 +29,28 @@ public class View {
     }
     private static String getChar(int x, int y){
         String out = "| ";
-        for (Unit unit: StartApp.allTeam) {
-            if (unit.getCoords()[0] == x && unit.getCoords()[1] == y){
-                if (unit.getHealth() == 0) {
-                    out = "|" + (AnsiColors.ANSI_RED + unit.toString().charAt(0) + AnsiColors.ANSI_RESET);
+        for (Unit human: StartApp.team1) {
+            if (human.coordinates.x == x && human.coordinates.y == y){
+                if (!human.isAlive) {
+                    out = "|" + (AnsiColors.ANSI_RED + human.toString().charAt(0) + AnsiColors.ANSI_RESET);
                     break;
                 }
-                if (StartApp.team1.contains(unit)) out = "|" + (AnsiColors.ANSI_GREEN + unit.toString().charAt(0) + AnsiColors.ANSI_RESET);
-                if (StartApp.team2.contains(unit)) out = "|" + (AnsiColors.ANSI_BLUE + unit.toString().charAt(0) + AnsiColors.ANSI_RESET);
+                out = "|" + (AnsiColors.ANSI_GREEN + human.toString().charAt(0) + AnsiColors.ANSI_RESET);
                 break;
             }
         }
+
+        for (Unit human: StartApp.team2) {
+            if (human.coordinates.x == x && human.coordinates.y == y){
+                if (!human.isAlive) {
+                    out = "|" + (AnsiColors.ANSI_RED + human.toString().charAt(0) + AnsiColors.ANSI_RESET);
+                    break;
+                }
+                out = "|" + (AnsiColors.ANSI_BLUE + human.toString().charAt(0) + AnsiColors.ANSI_RESET);
+                break;
+            }
+        }
+
         return out;
     }
     public static void view() {
@@ -47,7 +60,8 @@ public class View {
             System.out.print(AnsiColors.ANSI_YELLOW+ "Step " + step + AnsiColors.ANSI_RESET);
         }
         step++;
-        StartApp.allTeam.forEach((v) -> l[0] = Math.max(l[0], v.getInfo().length()));
+        StartApp.team1.forEach((v) -> l[0] = Math.max(l[0], v.getInfo().length()));
+        StartApp.team2.forEach((v) -> l[0] = Math.max(l[0], v.getInfo().length()));
         System.out.print("_".repeat(l[0]*2));
         System.out.println("");
         System.out.print(top10 + "    ");
